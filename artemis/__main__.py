@@ -12,7 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from artemis.interfaces.cli.main import app
+import multiprocessing
+import sys
+
+
+def main() -> None:
+    """Run the Typer CLI, or the private frozen daemon worker entrypoint."""
+    multiprocessing.freeze_support()
+    if getattr(sys, "frozen", False) and len(sys.argv) > 1 and sys.argv[1] == "_serve":
+        from apps.admin_console.server import main as serve
+
+        serve(sys.argv[2:])
+        return
+
+    from artemis.interfaces.cli.main import app
+
+    app()
+
 
 if __name__ == "__main__":
-    app()
+    main()
