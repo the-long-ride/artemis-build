@@ -69,7 +69,7 @@ for package in (
     hiddenimports.extend(collect_submodules(package, on_error="warn"))
 
 a = Analysis(
-    ["artemis/__main__.py"],
+    [str(root / "artemis/__main__.py")],
     pathex=[str(root)],
     binaries=[],
     datas=datas,
