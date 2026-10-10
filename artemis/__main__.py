@@ -24,6 +24,12 @@ def main() -> None:
 
         serve(sys.argv[2:])
         return
+    if getattr(sys, "frozen", False) and len(sys.argv) > 1 and sys.argv[1] == "_ipykernel":
+        # Jupyter cannot launch `python -m ipykernel_launcher` from a frozen exe.
+        from ipykernel.kernelapp import IPKernelApp
+
+        IPKernelApp.launch_instance(argv=sys.argv[2:])
+        return
 
     from artemis.interfaces.cli.main import app
 
