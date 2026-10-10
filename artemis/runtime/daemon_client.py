@@ -136,7 +136,9 @@ def spawn_daemon(
         log_handle = subprocess.DEVNULL
 
     kwargs: dict[str, Any] = {
-        "cwd": str(Path(sys.executable).resolve().parent) if getattr(sys, "frozen", False) else str(ROOT_DIR),
+        "cwd": str(Path(sys.executable).resolve().parent)
+        if getattr(sys, "frozen", False)
+        else str(ROOT_DIR),
         "env": env,
         "stdout": log_handle,
         "stderr": subprocess.STDOUT if log_handle is not subprocess.DEVNULL else subprocess.DEVNULL,
