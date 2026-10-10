@@ -110,15 +110,20 @@ def spawn_daemon(
     env["PYTHONUNBUFFERED"] = "1"
     env["PYTHONUTF8"] = "1"
 
-    cmd = [
-        sys.executable,
-        "-m",
-        "apps.admin_console.server",
-        "--host",
-        host,
-        "--port",
-        str(port),
-    ]
+    if getattr(sys, "frozen", False):
+        # A PyInstaller executable cannot interpret "-m"; re-enter its CLI
+        # through the private worker dispatch in artemis.__main__.
+        cmd = [sys.executable, "_serve", "--host", host, "--port", str(port)]
+    else:
+        cmd = [
+            sys.executable,
+            "-m",
+            "apps.admin_console.server",
+            "--host",
+            host,
+            "--port",
+            str(port),
+        ]
 
     # Persist daemon output for post-mortem debugging (daemon mode is the
     # default for `artemis restart`, so silent DEVNULL would hide crashes).
@@ -131,7 +136,7 @@ def spawn_daemon(
         log_handle = subprocess.DEVNULL
 
     kwargs: dict[str, Any] = {
-        "cwd": str(ROOT_DIR),
+        "cwd": str(Path(sys.executable).resolve().parent) if getattr(sys, "frozen", False) else str(ROOT_DIR),
         "env": env,
         "stdout": log_handle,
         "stderr": subprocess.STDOUT if log_handle is not subprocess.DEVNULL else subprocess.DEVNULL,
