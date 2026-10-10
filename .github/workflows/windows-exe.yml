@@ -18,6 +18,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: windows-exe-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   PYTHONUTF8: "1"
   UV_NO_PROGRESS: "1"
