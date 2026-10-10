@@ -47,7 +47,11 @@ def _target_file(target: str, home: Path) -> Path:
     if target == "codex":
         codex_home = Path(os.environ.get("CODEX_HOME", str(home / ".codex"))).expanduser()
         override = codex_home / "AGENTS.override.md"
-        return override if override.is_file() and override.read_text(encoding="utf-8").strip() else codex_home / "AGENTS.md"
+        return (
+            override
+            if override.is_file() and override.read_text(encoding="utf-8").strip()
+            else codex_home / "AGENTS.md"
+        )
     if target == "antigravity":
         return home / ".gemini" / "GEMINI.md"
     raise ValueError(f"Unsupported AI coding agent: {target}")
@@ -113,7 +117,9 @@ def install_agent_skill(
         old = dest.read_text(encoding="utf-8") if dest.is_file() else ""
         if (START in old) != (END in old):
             raise ValueError(f"Unmatched Artemis instruction markers in {dest}")
-    if not dry_run and (not skill_file.exists() or force or skill_file.read_text(encoding="utf-8") != skill_text):
+    if not dry_run and (
+        not skill_file.exists() or force or skill_file.read_text(encoding="utf-8") != skill_text
+    ):
         skill_file.parent.mkdir(parents=True, exist_ok=True)
         skill_file.write_text(skill_text, encoding="utf-8")
     for dest in destinations[1:]:
@@ -123,9 +129,15 @@ def install_agent_skill(
 
 @agents_app.command("install")
 def install_command(
-    target: Annotated[str, typer.Option("--target", "-t", help="claude, opencode, codex, antigravity, or all")] = "all",
-    dry_run: Annotated[bool, typer.Option("--dry-run", help="List changes without writing files")] = False,
-    force: Annotated[bool, typer.Option("--force", help="Replace an edited Artemis-managed SKILL.md")] = False,
+    target: Annotated[
+        str, typer.Option("--target", "-t", help="claude, opencode, codex, antigravity, or all")
+    ] = "all",
+    dry_run: Annotated[
+        bool, typer.Option("--dry-run", help="List changes without writing files")
+    ] = False,
+    force: Annotated[
+        bool, typer.Option("--force", help="Replace an edited Artemis-managed SKILL.md")
+    ] = False,
 ) -> None:
     """Install ~/.agents/skills/artemis-mobile-testing and global agent guidance."""
     try:
