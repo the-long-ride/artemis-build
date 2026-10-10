@@ -62,7 +62,10 @@ for package in (
         pass
 
 hiddenimports = []
-for package in ("artemis", "mcp_server", "apps.admin_console", "third_party.mobile_use"):
+for package in (
+    "artemis", "mcp_server", "apps.admin_console", "third_party.mobile_use",
+    "ipykernel", "IPython",
+):
     hiddenimports.extend(collect_submodules(package, on_error="warn"))
 
 a = Analysis(
