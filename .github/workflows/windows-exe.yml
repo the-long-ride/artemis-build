@@ -48,6 +48,9 @@ jobs:
       - name: Install locked Python runtime
         run: uv sync --locked
 
+      - name: Verify agent installation unit tests
+        run: uv run --locked pytest tests/unit/test_agent_skill_install.py -q
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22.22.3"
