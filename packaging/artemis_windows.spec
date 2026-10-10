@@ -33,6 +33,7 @@ datas = collect_data_files(
     "artemis",
     includes=["**/*.json", "**/*.jsonc", "**/*.md", "**/*.html", "**/*.js",
               "**/*.css", "**/*.png", "**/*.svg", "**/*.ico"],
+    excludes=["resources/showcase_ui/**", "resources/config/**"],
 )
 datas += collect_data_files("mcp_server", includes=["**/*.md", "**/*.json"])
 datas += collect_data_files("apps.admin_console", includes=["index.html"])
