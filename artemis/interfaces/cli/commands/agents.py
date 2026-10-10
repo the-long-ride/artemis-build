@@ -61,13 +61,13 @@ def _upsert_block(file_path: Path, text: str, *, dry_run: bool = False) -> None:
     if START in old:
         before, rest = old.split(START, 1)
         _, after = rest.split(END, 1)
-        result = before.rstrip() + "\n\n" + text + after
+        result = (before.rstrip() + "\n\n" if before.strip() else "") + text + after
     else:
-        result = old.rstrip() + "\n\n" + text + "\n"
+        result = (old.rstrip() + "\n\n" if old.strip() else "") + text + "\n"
     if result == old or dry_run:
         return
     file_path.parent.mkdir(parents=True, exist_ok=True)
-    file_path.write_text(result.lstrip() if not old else result, encoding="utf-8")
+    file_path.write_text(result, encoding="utf-8")
 
 
 def install_agent_skill(
