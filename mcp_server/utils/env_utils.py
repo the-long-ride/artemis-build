@@ -21,7 +21,9 @@ from typing import Any
 
 
 def get_project_root() -> str:
-    """Returns the absolute path to the project root repository."""
+    """Return a stable installation root (executable directory when frozen)."""
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(os.path.abspath(sys.executable))
     # Deliberate lazy import: this helper must keep working when the artemis
     # package (or its config bootstrap) is unavailable or broken, falling back
     # to filesystem-relative resolution below.
@@ -36,6 +38,8 @@ def get_project_root() -> str:
 
 def resolve_python_executable(project_root: str | None = None) -> str:
     """Resolves the preferred Python executable (.venv or current sys.executable)."""
+    if getattr(sys, "frozen", False):
+        return sys.executable
     root = project_root or get_project_root()
 
     if sys.platform == "win32":
