@@ -152,6 +152,7 @@ setup(
         "artemis": ["**/*.json", "**/*.md"],
         "artemis.resources": ["config/*.jsonc", "showcase_ui/*", "showcase_ui/**/*"],
         "apps.admin_console": ["index.html"],
+        "mcp_server": ["rules.md"],
         # third_party has no __init__.py (namespace package), so it does not clash
         # with other distributions that also ship a third_party directory.
         "third_party.mobile_use": ["LICENSE", "NOTICE", "METADATA", "**/*.md"],

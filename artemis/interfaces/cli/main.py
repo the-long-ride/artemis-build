@@ -17,6 +17,8 @@
 from typing import Annotated
 
 from artemis._version import __version__
+from artemis.interfaces.cli.commands.agent_lifecycle import register_commands
+from artemis.interfaces.cli.commands.agents import agents_app
 from artemis.interfaces.cli.commands.batch import batch_command
 from artemis.interfaces.cli.commands.doctor import doctor_command
 from artemis.interfaces.cli.commands.helper import helper_app
@@ -62,6 +64,8 @@ app.command(name="doctor", help="Check system prerequisites, device status, and 
 )
 app.command(name="batch", help="Execute a batch sequence of automation tasks.")(batch_command)
 app.command(name="mcp", help="Start the Artemis Model Context Protocol (MCP) server.")(mcp_command)
+app.add_typer(agents_app, name="agents", help="Install mobile-testing agent skills and guidance.")
+register_commands(app)
 app.add_typer(server_app, name="server", help="Cloud Run proxy and web dashboard server.")
 app.add_typer(trace_app, name="trace", help="Inspect and query execution traces.")
 app.add_typer(
