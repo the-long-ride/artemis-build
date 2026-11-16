@@ -63,14 +63,17 @@ def _get_vscode_user_dir() -> Path:
 
 def _get_config_snippet(client: str, python_exe: str, project_root: str) -> dict:
     """Generates MCP configuration dictionary for the specified client."""
+    frozen = getattr(sys, "frozen", False)
+    env = {
+        "PYTHONUNBUFFERED": "1",
+        "ARTEMIS_DESKTOP_NOTIFY": "true",
+    }
+    if not frozen:
+        env["PYTHONPATH"] = project_root
     config_body = {
         "command": python_exe,
-        "args": ["-m", "mcp_server"],
-        "env": {
-            "PYTHONUNBUFFERED": "1",
-            "PYTHONPATH": project_root,
-            "ARTEMIS_DESKTOP_NOTIFY": "true",
-        },
+        "args": ["mcp"] if frozen else ["-m", "mcp_server"],
+        "env": env,
     }
     config_with_cwd = {**config_body, "cwd": project_root}
 
@@ -447,6 +450,8 @@ def install_rules(client: str, project_root: str) -> list[str]:
     """Auto-installs ARTEMIS testing rules globally into user IDE rule directories across any OS."""
     installed_paths: list[str] = []
     rules_src = Path(project_root) / "mcp_server" / "rules.md"
+    if getattr(sys, "frozen", False):
+        rules_src = Path(sys._MEIPASS) / "mcp_server" / "rules.md"
     if not rules_src.exists():
         alt_src = Path(__file__).resolve().parents[4] / "mcp_server" / "rules.md"
         if alt_src.exists():

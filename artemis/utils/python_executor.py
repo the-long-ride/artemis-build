@@ -17,6 +17,7 @@ import logging
 from pathlib import Path
 import queue
 import subprocess
+import sys
 import time
 from typing import IO
 
@@ -73,6 +74,17 @@ class PythonExecutor:
             kernel_output = self._kernel_log if self._kernel_log is not None else subprocess.DEVNULL
 
             self.km = jupyter_client.KernelManager(kernel_name="python3")
+            if getattr(sys, "frozen", False):
+                # KernelSpec normally launches sys.executable -m ipykernel_launcher.
+                # A PyInstaller executable is not a general-purpose Python
+                # interpreter, so run the kernel through its private entrypoint.
+                from jupyter_client.kernelspec import KernelSpec
+
+                self.km._kernel_spec = KernelSpec(
+                    argv=[sys.executable, "_ipykernel", "-f", "{connection_file}"],
+                    display_name="Artemis embedded Python",
+                    language="python",
+                )
             self.km.start_kernel(stdout=kernel_output, stderr=kernel_output)
             self.kc = self.km.client()
             self.kc.start_channels()
